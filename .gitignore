@@ -1,0 +1,26 @@
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Node (if we add npm packages)
+node_modules/
+npm-debug.log
+
+# Logs
+*.log
+
+# Clasp files (if we use Clasp)
+.clasp.json
+
+# Build output
+dist/
+build/

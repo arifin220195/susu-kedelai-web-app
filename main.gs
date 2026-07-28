@@ -31,9 +31,15 @@ function doGet(e) {
       pageTitle = "Admin Portal - Susu Kedelai Store";
     }
 
-    // Check if HTML template exists, fallback to simple message if not created yet
+    // Check if HTML template exists (supports both root and frontend/ folder naming in Apps Script)
     try {
-      const template = HtmlService.createTemplateFromFile(templateName);
+      let template;
+      try {
+        template = HtmlService.createTemplateFromFile(templateName);
+      } catch (e1) {
+        template = HtmlService.createTemplateFromFile("frontend/" + templateName);
+      }
+
       template.page = page;
       template.params = params;
 
@@ -42,11 +48,9 @@ function doGet(e) {
         .addMetaTag('viewport', 'width=device-width, initial-scale=1.0')
         .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
     } catch (err) {
-      // HTML files might not be deployed yet in trial
       return HtmlService.createHtmlOutput(
-        `<h2>Susu Kedelai Web App Backend Ready</h2>` +
-        `<p>Halaman UI <b>${templateName}.html</b> sedang disiapkan.</p>` +
-        `<p>Backend API berjalan normal. Gunakan ?action=getProducts untuk cek API.</p>`
+        `<h2>Susu Kedelai Web App Error</h2>` +
+        `<p>Gagal memuat template UI: ${err.toString()}</p>`
       );
     }
   } catch (err) {

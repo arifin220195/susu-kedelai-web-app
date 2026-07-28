@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Portal - KedelaiKu</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --primary: #2D6A4F;
+      --primary-dark: #1B4332;
+      --primary-light: #D8F3DC;
+      --accent: #F4A261;
+      --bg-main: #F8FAFC;
+      --card-bg: #FFFFFF;
+      --text-main: #0F172A;
+      --text-muted: #64748B;
+      --border-color: #E2E8F0;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 14px rgba(0,0,0,0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 260px;
+      background: var(--primary-dark);
+      color: white;
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: white;
+      padding: 0 12px;
+    }
+
+    .sidebar-brand i {
+      color: var(--accent);
+      font-size: 1.5rem;
+    }
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      list-style: none;
+    }
+
+    .menu-item button {
+      width: 100%;
+      background: none;
+      border: none;
+      color: #94A3B8;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 0.92rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .menu-item button:hover, .menu-item button.active {
+      background: rgba(255, 255, 255, 0.12);
+      color: white;
+    }
+
+    .menu-item button.active i {
+      color: var(--accent);
+    }
+
+    /* MAIN CONTENT */
+    .main-content {
+      flex: 1;
+      padding: 32px;
+      overflow-y: auto;
+    }
+
+    .top-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+
+    .page-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    /* METRICS STAT CARDS */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+    }
+
+    .stat-value {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .stat-label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    /* TABLE & CARDS CONTAINER */
+    .panel-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 32px;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .panel-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    /* TABLES */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    .data-table th, .data-table td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .data-table th {
+      background: #F8FAFC;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    /* BADGES */
+    .status-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .badge-baru { background: #E0F2FE; color: #0284C7; }
+    .badge-diproses { background: #FEF3C7; color: #D97706; }
+    .badge-dikirim { background: #E0E7FF; color: #4338CA; }
+    .badge-selesai { background: #DCFCE7; color: #15803D; }
+    .badge-batal { background: #FEE2E2; color: #DC2626; }
+
+    /* BUTTONS & FORMS */
+    .btn {
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 0.85rem;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-outline { background: white; border: 1px solid var(--border-color); color: var(--text-main); }
+    .btn-sm { padding: 4px 10px; font-size: 0.78rem; }
+
+    .tab-section {
+      display: none;
+    }
+
+    .tab-section.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR NAV -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <i class="fa-solid fa-gauge-high"></i>
+      <span>KedelaiKu Admin</span>
+    </div>
+
+    <ul class="sidebar-menu">
+      <li class="menu-item">
+        <button class="active" onclick="switchTab('dashboard', this)">
+          <i class="fa-solid fa-chart-pie"></i> Dashboard
+        </button>
+      </li>
+      <li class="menu-item">
+        <button onclick="switchTab('orders', this)">
+          <i class="fa-solid fa-receipt"></i> Kelola Pesanan
+        </button>
+      </li>
+      <li class="menu-item">
+        <button onclick="switchTab('products', this)">
+          <i class="fa-solid fa-boxes-stacked"></i> Master Produk
+        </button>
+      </li>
+      <li class="menu-item">
+        <button onclick="switchTab('customers', this)">
+          <i class="fa-solid fa-users"></i> Data Pelanggan
+        </button>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- MAIN AREA -->
+  <main class="main-content">
+    
+    <!-- TOP HEADER -->
+    <div class="top-header">
+      <h1 class="page-title" id="pageTitle">Dashboard Overview</h1>
+      <button class="btn btn-outline" onclick="refreshData()">
+        <i class="fa-solid fa-rotate-right"></i> Refresh Data
+      </button>
+    </div>
+
+    <!-- STATS CARDS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-rupiah-sign"></i></div>
+        <div>
+          <div class="stat-value" id="statRevenue">Rp 0</div>
+          <div class="stat-label">Total Omset Penjualan</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#FEF3C7; color:#D97706;"><i class="fa-solid fa-clock"></i></div>
+        <div>
+          <div class="stat-value" id="statPending">0</div>
+          <div class="stat-label">Pesanan Perlu Diproses</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#E0F2FE; color:#0284C7;"><i class="fa-solid fa-cart-flatbed"></i></div>
+        <div>
+          <div class="stat-value" id="statOrders">0</div>
+          <div class="stat-label">Total Pesanan</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#FEE2E2; color:#DC2626;"><i class="fa-solid fa-triangle-exclamation"></i></div>
+        <div>
+          <div class="stat-value" id="statLowStock">0</div>
+          <div class="stat-label">Peringatan Stok Menipis</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 1: DASHBOARD -->
+    <div id="tab-dashboard" class="tab-section active">
+      <div class="panel-card">
+        <div class="panel-header">
+          <h3 class="panel-title">Produk Terlaris (Best Seller)</h3>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>SKU</th>
+              <th>Nama Produk</th>
+              <th>Total Terjual (Qty)</th>
+              <th>Total Omset</th>
+            </tr>
+          </thead>
+          <tbody id="bestSellerBody">
+            <!-- Populated via JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 2: ORDERS MANAGEMENT -->
+    <div id="tab-orders" class="tab-section">
+      <div class="panel-card">
+        <div class="panel-header">
+          <h3 class="panel-title">Daftar Pesanan Masuk</h3>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Tanggal</th>
+              <th>Pelanggan / WA</th>
+              <th>Detail Order</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="ordersTableBody">
+            <!-- Populated via JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 3: PRODUCTS MANAGEMENT -->
+    <div id="tab-products" class="tab-section">
+      <div class="panel-card">
+        <div class="panel-header">
+          <h3 class="panel-title">Katalog & Stok Produk</h3>
+          <button class="btn btn-primary" onclick="alert('Fitur Tambah Produk Modal')">
+            <i class="fa-solid fa-plus"></i> Tambah Produk Baru
+          </button>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>SKU</th>
+              <th>Nama Produk</th>
+              <th>Kategori</th>
+              <th>Harga Jual</th>
+              <th>Stok Saat Ini</th>
+              <th>Stok Min</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="productsTableBody">
+            <!-- Populated via JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 4: CUSTOMER CRM -->
+    <div id="tab-customers" class="tab-section">
+      <div class="panel-card">
+        <div class="panel-header">
+          <h3 class="panel-title">Database Pelanggan (CRM)</h3>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Customer ID</th>
+              <th>Nama</th>
+              <th>No WhatsApp</th>
+              <th>Total Transaksi</th>
+              <th>Total Spending</th>
+              <th>Order Terakhir</th>
+            </tr>
+          </thead>
+          <tbody id="customersTableBody">
+            <!-- Populated via JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      refreshData();
+    });
+
+    function switchTab(tabId, btn) {
+      document.querySelectorAll(".sidebar-menu button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      document.querySelectorAll(".tab-section").forEach(sec => sec.classList.remove("active"));
+      document.getElementById(`tab-${tabId}`).classList.add("active");
+
+      const titles = {
+        dashboard: "Dashboard Overview",
+        orders: "Kelola Pesanan",
+        products: "Master Katalog Produk",
+        customers: "Database Pelanggan (CRM)"
+      };
+      document.getElementById("pageTitle").textContent = titles[tabId] || "Admin Portal";
+    }
+
+    function refreshData() {
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        google.script.run.withSuccessHandler(res => {
+          if (res && res.success) {
+            updateDashboardCards(res.data);
+          }
+        }).getDashboardSummary();
+
+        google.script.run.withSuccessHandler(res => {
+          if (res && res.success) renderOrdersTable(res.data);
+        }).getOrders();
+
+        google.script.run.withSuccessHandler(data => {
+          renderProductsTable(data || []);
+        }).getAllProducts();
+
+        google.script.run.withSuccessHandler(data => {
+          renderCustomersTable(data || []);
+        }).getAllCustomers();
+
+        google.script.run.withSuccessHandler(res => {
+          if (res && res.success) renderBestSellers(res.data);
+        }).getBestSellingProducts(5);
+      } else {
+        // Fallback Demo Data
+        updateDashboardCards({
+          totalRevenue: 1250000,
+          pendingOrders: 3,
+          totalOrders: 18,
+          lowStockCount: 1
+        });
+
+        renderBestSellers([
+          { sku: "SKU-ORI-500", nama: "Susu Kedelai Original Fresh", totalQty: 42, totalRevenue: 336000 },
+          { sku: "SKU-CHOCO-500", nama: "Susu Kedelai Premium Cokelat", totalQty: 28, totalRevenue: 280000 }
+        ]);
+
+        renderOrdersTable([
+          { orderId: "INV-20260728-0001", tanggal: "2026-07-28", noWa: "62812345678", total: 42000, status: "BARU", detailProduk: "Paket Sehat Mingguan (1x)" },
+          { orderId: "INV-20260728-0002", tanggal: "2026-07-28", noWa: "62819876543", total: 20000, status: "DIPROSES", detailProduk: "Susu Kedelai Cokelat (2x)" }
+        ]);
+
+        renderProductsTable([
+          { sku: "SKU-ORI-500", nama: "Susu Kedelai Original Fresh", kategori: "SUSU", hargaJual: 8000, stok: 50, stokMin: 10 },
+          { sku: "SKU-CHOCO-500", nama: "Susu Kedelai Premium Cokelat", kategori: "SUSU", hargaJual: 10000, stok: 35, stokMin: 10 }
+        ]);
+
+        renderCustomersTable([
+          { customerId: "CUST-01", nama: "Budi Santoso", noWa: "62812345678", totalPembelian: 4, totalSpending: 140000, lastOrder: "2026-07-28" }
+        ]);
+      }
+    }
+
+    function updateDashboardCards(data) {
+      document.getElementById("statRevenue").textContent = `Rp ${(data.totalRevenue||0).toLocaleString('id-ID')}`;
+      document.getElementById("statPending").textContent = data.pendingOrders || 0;
+      document.getElementById("statOrders").textContent = data.totalOrders || 0;
+      document.getElementById("statLowStock").textContent = data.lowStockCount || 0;
+    }
+
+    function renderBestSellers(list) {
+      const body = document.getElementById("bestSellerBody");
+      body.innerHTML = "";
+      list.forEach(item => {
+        body.innerHTML += `
+          <tr>
+            <td><code>${item.sku}</code></td>
+            <td><b>${item.nama}</b></td>
+            <td>${item.totalQty} botol/pcs</td>
+            <td>Rp ${(item.totalRevenue||0).toLocaleString('id-ID')}</td>
+          </tr>
+        `;
+      });
+    }
+
+    function renderOrdersTable(orders) {
+      const body = document.getElementById("ordersTableBody");
+      body.innerHTML = "";
+      orders.forEach(o => {
+        const statusClass = `badge-${(o.status||'BARU').toLowerCase()}`;
+        body.innerHTML += `
+          <tr>
+            <td><code>${o.orderId}</code></td>
+            <td>${o.tanggal || '-'}</td>
+            <td>${o.noWa}</td>
+            <td>${typeof o.detailProduk === 'string' ? o.detailProduk : JSON.stringify(o.detailProduk)}</td>
+            <td><b>Rp ${(o.total||0).toLocaleString('id-ID')}</b></td>
+            <td><span class="status-badge ${statusClass}">${o.status}</span></td>
+            <td>
+              <select class="btn btn-outline btn-sm" onchange="changeStatus('${o.orderId}', this.value)">
+                <option value="BARU" ${o.status==='BARU'?'selected':''}>BARU</option>
+                <option value="DIPROSES" ${o.status==='DIPROSES'?'selected':''}>DIPROSES</option>
+                <option value="DIKIRIM" ${o.status==='DIKIRIM'?'selected':''}>DIKIRIM</option>
+                <option value="SELESAI" ${o.status==='SELESAI'?'selected':''}>SELESAI</option>
+                <option value="BATAL" ${o.status==='BATAL'?'selected':''}>BATAL</option>
+              </select>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function renderProductsTable(products) {
+      const body = document.getElementById("productsTableBody");
+      body.innerHTML = "";
+      products.forEach(p => {
+        body.innerHTML += `
+          <tr>
+            <td><code>${p.sku}</code></td>
+            <td><b>${p.nama}</b></td>
+            <td>${p.kategori}</td>
+            <td>Rp ${(p.hargaJual||p.harga||0).toLocaleString('id-ID')}</td>
+            <td><b style="${p.stok<=p.stokMin?'color:red':''}">${p.stok}</b></td>
+            <td>${p.stokMin || 5}</td>
+            <td>
+              <button class="btn btn-outline btn-sm" onclick="quickUpdateStock('${p.sku}', ${p.stok})"><i class="fa-solid fa-pen-to-square"></i> Stok</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function renderCustomersTable(customers) {
+      const body = document.getElementById("customersTableBody");
+      body.innerHTML = "";
+      customers.forEach(c => {
+        body.innerHTML += `
+          <tr>
+            <td><code>${c.customerId}</code></td>
+            <td><b>${c.nama}</b></td>
+            <td>${c.noWa}</td>
+            <td>${c.totalPembelian}x pesanan</td>
+            <td>Rp ${(c.totalSpending||0).toLocaleString('id-ID')}</td>
+            <td>${c.lastOrder || '-'}</td>
+          </tr>
+        `;
+      });
+    }
+
+    function changeStatus(orderId, newStatus) {
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        google.script.run.withSuccessHandler(res => {
+          alert(`Status order ${orderId} diubah menjadi ${newStatus}`);
+          refreshData();
+        }).updateOrderStatus(orderId, newStatus, "Diubah via Admin Dashboard");
+      } else {
+        alert(`Status (Demo) ${orderId} -> ${newStatus}`);
+      }
+    }
+
+    function quickUpdateStock(sku, currentStock) {
+      const input = prompt(`Update stok untuk ${sku}:`, currentStock);
+      if (input !== null) {
+        const newStock = parseInt(input);
+        if (!isNaN(newStock)) {
+          if (typeof google !== 'undefined' && google.script && google.script.run) {
+            google.script.run.withSuccessHandler(res => {
+              alert("Stok berhasil diperbarui!");
+              refreshData();
+            }).updateProductStock(sku, newStock);
+          } else {
+            alert(`Stok (Demo) ${sku} -> ${newStock}`);
+          }
+        }
+      }
+    }
+  </script>
+</body>
+</html>

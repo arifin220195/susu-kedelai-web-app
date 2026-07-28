@@ -31,28 +31,33 @@ function doGet(e) {
       pageTitle = "Admin Portal - Susu Kedelai Store";
     }
 
-    // Check if HTML template exists (supports both root and frontend/ folder naming in Apps Script)
-    try {
-      let template;
+    // Check if HTML template exists across multiple naming conventions
+    let template;
+    const namesToTry = [templateName, "frontend/" + templateName, templateName.toLowerCase()];
+    let lastErr = null;
+    for (let i = 0; i < namesToTry.length; i++) {
       try {
-        template = HtmlService.createTemplateFromFile(templateName);
-      } catch (e1) {
-        template = HtmlService.createTemplateFromFile("frontend/" + templateName);
+        template = HtmlService.createTemplateFromFile(namesToTry[i]);
+        if (template) break;
+      } catch (e) {
+        lastErr = e;
       }
+    }
 
-      template.page = page;
-      template.params = params;
-
-      return template.evaluate()
-        .setTitle(pageTitle)
-        .addMetaTag('viewport', 'width=device-width, initial-scale=1.0')
-        .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
-    } catch (err) {
+    if (!template) {
       return HtmlService.createHtmlOutput(
         `<h2>Susu Kedelai Web App Error</h2>` +
-        `<p>Gagal memuat template UI: ${err.toString()}</p>`
+        `<p>Gagal memuat template UI: ${lastErr ? lastErr.toString() : 'Template tidak ditemukan'}</p>`
       );
     }
+
+    template.page = page;
+    template.params = params;
+
+    return template.evaluate()
+      .setTitle(pageTitle)
+      .addMetaTag('viewport', 'width=device-width, initial-scale=1.0')
+      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
   } catch (err) {
     return createJsonResponse({ success: false, message: "Server Error: " + err.toString() });
   }
